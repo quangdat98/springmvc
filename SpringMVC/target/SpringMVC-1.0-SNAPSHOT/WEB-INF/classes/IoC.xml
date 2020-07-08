@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/tx
+          http://www.springframework.org/schema/tx/spring-tx.xsd
+">
+
+
+
+
+    <bean id="dataSourceIoc" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+        <property name="driverClassName" value="com.mysql.jdbc.Driver" />
+        <property name="url" value="jdbc:mysql://localhost:3306/thoitrang" />
+        <property name="username" value="root" />
+        <property name="password" value="26011998" />
+    </bean>
+
+    <bean id="sessionFactoty" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+            <property name="dataSource" ref="dataSourceIoc"></property>
+            <property name="packagesToScan" value="com.quangdat.entity"></property>
+        <!-- nếu không có dòng này t t phải có 1 class để định nghĩ các cột của sql vì dùng tên định danh (@Entity..) nên k cần -->
+            <property name="hibernateProperties">
+                <props>
+                    <prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop><!--cái này cho phép thực hiện các câu truy vấn là mysql-->
+
+                    <prop key="hibernate.show_sql">true</prop><!--cái này cho phép hiện thị các câu lệnh sql trên ứng dụng-->
+                </props>
+            </property>
+    </bean>
+
+    <bean id="transactionManger" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+            <property name="sessionFactory" ref="sessionFactoty"></property>
+    </bean>
+
+    <tx:annotation-driven transaction-manager="transactionManger" />
+
+
+</beans>
